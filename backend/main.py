@@ -42,9 +42,8 @@ def search(query: str):
     if not query:
         return []
 
-    query = quote(query)
+    url = f"{BASE_URL}/search/movie?api_key={API_KEY}&query={query}"
 
-    url = f"{BASE_URL}/search/multi?api_key={API_KEY}&query={query}"
     try:
         return requests.get(url).json().get("results", [])
     except:

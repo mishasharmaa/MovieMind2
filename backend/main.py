@@ -12,7 +12,7 @@ API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
 
-# ✅ FIXED: Proper CORS
+#  Proper CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # allow all (simpler for dev)
@@ -29,7 +29,7 @@ def get_popular():
     if not API_KEY:
         return []
 
-    url = f"{BASE_URL}/trending/all/week?api_key={API_KEY}"
+    url = f"{BASE_URL}/trending/movie/week?api_key={API_KEY}"
     try:
         return requests.get(url).json().get("results", [])
     except:

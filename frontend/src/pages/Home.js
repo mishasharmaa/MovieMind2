@@ -127,7 +127,38 @@ function Home() {
         minHeight: "100vh"
       }}
     >
-      <h1>🎬 MovieMind Pro</h1>
+      {/* ✅ HEADER WITH WATCHLIST BUTTON */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "20px"
+        }}
+      >
+        <h1>🎬 MovieMind Pro</h1>
+
+        <button
+          onClick={() => navigate("/watchlist")}
+          style={{
+            padding: "8px 14px",
+            borderRadius: "6px",
+            cursor: "pointer",
+            background: "#1f2937",
+            color: "white",
+            border: "none",
+            fontWeight: "bold"
+          }}
+          onMouseOver={(e) =>
+            (e.target.style.background = "#374151")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.background = "#1f2937")
+          }
+        >
+          ⭐ Watchlist
+        </button>
+      </div>
 
       {/* 🔍 SEARCH BAR */}
       <div style={{ marginBottom: "20px" }}>

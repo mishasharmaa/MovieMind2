@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function MovieDetails() {
   const { id } = useParams();
 
   const [movie, setMovie] = useState(null);
   const [providers, setProviders] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchMovie();
     fetchProviders();
@@ -93,6 +94,18 @@ function MovieDetails() {
             }}
           >
             ⭐ Add to Watchlist
+          </button>
+
+          <button
+            onClick={() => navigate("/watchlist")}
+            style={{
+              marginLeft: "10px",
+              padding: "10px",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            📂 View Watchlist
           </button>
 
           {/* ================= WATCH PROVIDERS ================= */}

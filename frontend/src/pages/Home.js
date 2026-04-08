@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { searchMovies, getTrending, getRecommendations } from "../api";
+import { searchMovies, getTrending, getRecommendations } from "../Api";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [trending, setTrending] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [recommended, setRecommended] = useState([]);
 
   const navigate = useNavigate();
 
@@ -16,117 +16,82 @@ function Home() {
 
   // ================= LOAD TRENDING =================
   const loadTrending = async () => {
-    setLoading(true);
-    setError("");
-
     try {
       const res = await getTrending();
-      setMovies(res.data || []);
+      setTrending(res.data || []);
     } catch {
-      setMovies([]);
-      setError("Failed to load trending movies.");
+      setTrending([]);
     }
-
-    setLoading(false);
   };
 
   // ================= SEARCH =================
   const handleSearch = async () => {
     if (!query.trim()) return;
 
-    setLoading(true);
-    setError("");
-
     try {
       const res = await searchMovies(query);
-      setMovies(res.data || []);
+      setSearchResults(res.data || []);
+      setRecommended([]);
     } catch {
-      setMovies([]);
-      setError("Search failed. Try again.");
+      setSearchResults([]);
     }
-
-    setLoading(false);
   };
 
   // ================= RECOMMEND =================
   const handleRecommend = async () => {
     if (!query.trim()) return;
 
-    setLoading(true);
-    setError("");
-
     try {
       const res = await getRecommendations(query);
-      setMovies(res.data || []);
+      setRecommended(res.data || []);
+      setSearchResults([]);
     } catch {
-      setMovies([]);
-      setError("Recommendation failed.");
-    }
-
-    setLoading(false);
-  };
-
-  // ================= ENTER KEY SUPPORT =================
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
+      setRecommended([]);
     }
   };
 
-  return (
-    <div style={{ background: "#0e1117", color: "white", padding: "20px", minHeight: "100vh" }}>
-      <h1>🎬 MovieMind Pro</h1>
+  // ================= GENRE MAP =================
+  const genreMap = {
+    28: "🔥 Action",
+    35: "😂 Comedy",
+    27: "😱 Horror",
+    10749: "❤️ Romance",
+    878: "🚀 Sci-Fi",
+    18: "🎭 Drama"
+  };
 
-      {/* ================= INPUT ================= */}
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          placeholder="Search movies or TV shows..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          style={{
-            marginRight: "10px",
-            padding: "10px",
-            borderRadius: "6px",
-            border: "none",
-            width: "250px"
-          }}
-        />
+  // ================= GROUP MOVIES =================
+  const grouped = {};
+  trending.forEach((movie) => {
+    movie.genre_ids?.forEach((id) => {
+      if (genreMap[id]) {
+        if (!grouped[id]) grouped[id] = [];
+        if (!grouped[id].some((m) => m.id === movie.id)) {
+          grouped[id].push(movie);
+        }
+      }
+    });
+  });
 
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          style={{ marginRight: "10px", padding: "10px" }}
-        >
-          Search
-        </button>
+  // ================= MOVIE ROW =================
+  const MovieRow = ({ title, data }) => (
+    <div style={{ marginBottom: "30px" }}>
+      <h2>{title}</h2>
 
-        <button
-          onClick={handleRecommend}
-          disabled={loading}
-          style={{ padding: "10px" }}
-        >
-          Recommend
-        </button>
-      </div>
-
-      {/* ================= STATUS ================= */}
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {/* ================= MOVIE GRID ================= */}
-      <div style={{ display: "flex", flexWrap: "wrap", marginTop: "20px" }}>
-        {movies
+      <div
+        style={{
+          display: "flex",
+          overflowX: "scroll",
+          gap: "15px",
+          padding: "10px 0"
+        }}
+      >
+        {data
           .filter((m) => m.poster_path)
           .map((m) => (
             <div
               key={m.id}
-              style={{
-                margin: "10px",
-                width: "150px",
-                textAlign: "center",
-                cursor: "pointer"
-              }}
+              style={{ minWidth: "150px", cursor: "pointer" }}
               onClick={() => navigate(`/movie/${m.id}`)}
             >
               <img
@@ -137,16 +102,74 @@ function Home() {
                   width: "100%",
                   transition: "0.3s"
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.1)")
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               />
-
-              <p style={{ fontSize: "14px", marginTop: "8px" }}>
+              <p style={{ fontSize: "13px" }}>
                 {m.title || m.name}
               </p>
             </div>
           ))}
       </div>
+    </div>
+  );
+
+  return (
+    <div
+      style={{
+        background: "#0e1117",
+        color: "white",
+        padding: "20px",
+        minHeight: "100vh"
+      }}
+    >
+      <h1>🎬 MovieMind Pro</h1>
+
+      {/* 🔍 SEARCH BAR */}
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          placeholder="Search movies..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            marginRight: "10px",
+            padding: "10px",
+            borderRadius: "6px",
+            border: "none"
+          }}
+        />
+
+        <button onClick={handleSearch} style={{ marginRight: "10px" }}>
+          Search
+        </button>
+
+        <button onClick={handleRecommend}>
+          Recommend
+        </button>
+      </div>
+
+      {/* 🔍 SEARCH RESULTS */}
+      {searchResults.length > 0 && (
+        <MovieRow title="🔍 Search Results" data={searchResults} />
+      )}
+
+      {/* 🎯 RECOMMENDED */}
+      {recommended.length > 0 && (
+        <MovieRow title="🎯 Recommended for You" data={recommended} />
+      )}
+
+      {/* 🎬 GENRE ROWS */}
+      {Object.keys(grouped).map((genreId) => (
+        <MovieRow
+          key={genreId}
+          title={genreMap[genreId]}
+          data={grouped[genreId]}
+        />
+      ))}
     </div>
   );
 }

@@ -9,13 +9,14 @@ from urllib.parse import quote
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-
+if not API_KEY:
+    raise ValueError("❌ API_KEY not found. Check your .env file")
 app = FastAPI()
 
 #  Proper CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all (simpler for dev)
+    allow_origins=["http://localhost:3000"],  # allow all (simpler for dev)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,7 +32,7 @@ def get_popular():
 
     url = f"{BASE_URL}/trending/movie/week?api_key={API_KEY}"
     try:
-        return requests.get(url).json().get("results", [])
+        return requests.get(url, timeout=5).json().get("results", [])
     except:
         return []
 
@@ -42,10 +43,10 @@ def search(query: str):
     if not query:
         return []
 
-    url = f"{BASE_URL}/search/movie?api_key={API_KEY}&query={query}"
+    url = f"{BASE_URL}/search/movie?api_key={API_KEY}&query={quote(query)}"
 
     try:
-        return requests.get(url).json().get("results", [])
+        return requests.get(url, timeout=5).json().get("results", [])
     except:
         return []
 
@@ -58,7 +59,6 @@ def recommend(query: str):
 
     movies = search(query)
 
-    # filter valid
     valid_movies = [m for m in movies if m.get("overview")]
 
     if len(valid_movies) < 2:
@@ -72,10 +72,8 @@ def recommend(query: str):
 
         return [valid_movies[i[0]] for i in scores]
 
-    except Exception as e:
-        print("Recommendation error:", e)
-        return valid_movies[:10]
-
+    except:
+        return sorted(valid_movies, key=lambda x: x.get("vote_average", 0), reverse=True)[:10]
 
 # ================= TRENDING =================
 @app.get("/trending")
@@ -88,6 +86,16 @@ def trending():
 def get_movie(movie_id: int):
     url = f"{BASE_URL}/movie/{movie_id}?api_key={API_KEY}&append_to_response=credits"
     try:
-        return requests.get(url).json()
+        return requests.get(url, timeout=5).json()
+    except:
+        return {}
+    
+# Where to watch
+@app.get("/watch/{movie_id}")
+def get_watch_providers(movie_id: int):
+    url = f"{BASE_URL}/movie/{movie_id}/watch/providers?api_key={API_KEY}"
+    try:
+        data = requests.get(url, timeout=5).json()
+        return data.get("results", {}).get("CA", {})  # Canada
     except:
         return {}

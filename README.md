@@ -7,4 +7,5 @@ uvicorn main:app --reload
 
 frontend: 
 cd frontend
+ npm install 
  npm start

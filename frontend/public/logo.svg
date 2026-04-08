@@ -1,0 +1,36 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9B4DFF"></stop>
+      <stop offset="50%" stop-color="#5A6CFF"></stop>
+      <stop offset="100%" stop-color="#00AEEF"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- Main blob circle -->
+  <path d="
+    M150,30
+    C220,30 270,80 270,150
+    C270,220 220,270 150,270
+    C80,270 30,220 30,150
+    C30,80 80,30 150,30
+    Z
+  " fill="url(#grad)"></path>
+
+  <!-- Play button -->
+  <polygon points="135,105 135,195 205,150" fill="white" rx="10"></polygon>
+
+  <!-- Left neural curve -->
+  <path d="M85 110 C60 80, 60 220, 110 185" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"></path>
+  <circle cx="85" cy="110" r="6" fill="white"></circle>
+  <circle cx="110" cy="185" r="6" fill="white"></circle>
+
+  <!-- Right upper curve -->
+  <path d="M205 85 C240 90, 250 140, 220 155" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"></path>
+  <circle cx="205" cy="85" r="6" fill="white"></circle>
+  <circle cx="220" cy="155" r="6" fill="white"></circle>
+
+  <!-- Bottom curve -->
+  <path d="M120 240 C170 260, 230 230, 245 185" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"></path>
+  <circle cx="245" cy="185" r="6" fill="white"></circle>
+</svg>

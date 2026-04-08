@@ -9,6 +9,7 @@ function MovieDetails() {
   const [movie, setMovie] = useState(null);
   const [providers, setProviders] = useState([]);
   const navigate = useNavigate();
+  
   useEffect(() => {
     fetchMovie();
     fetchProviders();

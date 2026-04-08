@@ -25,7 +25,7 @@ function Watchlist() {
         minHeight: "100vh"
       }}
     >
-      <h1>⭐ My Watchlist</h1>
+      <h1>My Watchlist</h1>
 
       {movies.length === 0 && <p>No movies saved yet.</p>}
 
@@ -70,7 +70,7 @@ function Watchlist() {
                 border: "none"
               }}
             >
-              ❌ Remove
+              Remove
             </button>
           </div>
         ))}

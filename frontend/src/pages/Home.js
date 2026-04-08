@@ -127,40 +127,76 @@ function Home() {
         minHeight: "100vh"
       }}
     >
-      {/* ✅ HEADER WITH WATCHLIST BUTTON */}
+      {/* 🔥 CLEAN HEADER */}
       <div
         style={{
+          position: "relative",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "20px"
+          marginBottom: "30px",
+          paddingBottom: "10px",
+          borderBottom: "1px solid #1f2937"
         }}
       >
-        <h1>🎬 MovieMind Pro</h1>
-
-        <button
-          onClick={() => navigate("/watchlist")}
+        {/* CENTER TITLE */}
+        <h1
           style={{
-            padding: "8px 14px",
-            borderRadius: "6px",
-            cursor: "pointer",
-            background: "#1f2937",
-            color: "white",
-            border: "none",
-            fontWeight: "bold"
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+            margin: 0,
+            fontWeight: "600",
+            letterSpacing: "1px"
           }}
-          onMouseOver={(e) =>
-            (e.target.style.background = "#374151")
-          }
-          onMouseOut={(e) =>
-            (e.target.style.background = "#1f2937")
-          }
         >
-          ⭐ Watchlist
-        </button>
+          MovieMind Pro
+        </h1>
+
+        {/* RIGHT SIDE */}
+        <div
+          style={{
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+            gap: "20px"
+          }}
+        >
+          {/* WATCHLIST LINK */}
+          <span
+            onClick={() => navigate("/watchlist")}
+            style={{
+              cursor: "pointer",
+              opacity: 0.7,
+              transition: "0.3s",
+              fontWeight: "500"
+            }}
+            onMouseOver={(e) => (e.target.style.opacity = 1)}
+            onMouseOut={(e) => (e.target.style.opacity = 0.7)}
+          >
+            Watchlist
+          </span>
+
+          {/* PROFILE ICON */}
+          <div
+            style={{
+              width: "35px",
+              height: "35px",
+              borderRadius: "50%",
+              background: "#374151",
+              cursor: "pointer",
+              transition: "0.3s"
+            }}
+            onMouseOver={(e) =>
+              (e.target.style.background = "#4b5563")
+            }
+            onMouseOut={(e) =>
+              (e.target.style.background = "#374151")
+            }
+          />
+        </div>
       </div>
 
-      {/* 🔍 SEARCH BAR */}
+      {/* SEARCH BAR */}
       <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Search movies..."
@@ -185,12 +221,12 @@ function Home() {
 
       {/* 🔍 SEARCH RESULTS */}
       {searchResults.length > 0 && (
-        <MovieRow title="🔍 Search Results" data={searchResults} />
+        <MovieRow title="Search Results" data={searchResults} />
       )}
 
       {/* 🎯 RECOMMENDED */}
       {recommended.length > 0 && (
-        <MovieRow title="🎯 Recommended for You" data={recommended} />
+        <MovieRow title="Recommended for You" data={recommended} />
       )}
 
       {/* 🎬 GENRE ROWS */}

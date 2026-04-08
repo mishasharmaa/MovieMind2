@@ -10,13 +10,13 @@ load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
 if not API_KEY:
-    raise ValueError("❌ API_KEY not found. Check your .env file")
+    raise ValueError("API_KEY not found. Check your .env file")
 app = FastAPI()
 
 #  Proper CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # allow all (simpler for dev)
+    allow_origins=["http://localhost:3000"],  # allow all 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,7 +25,7 @@ app.add_middleware(
 BASE_URL = "https://api.themoviedb.org/3"
 
 
-# ================= FETCH TRENDING =================
+#  FETCH TRENDING 
 def get_popular():
     if not API_KEY:
         return []
@@ -37,7 +37,7 @@ def get_popular():
         return []
 
 
-# ================= SEARCH =================
+#  SEARCH 
 @app.get("/search")
 def search(query: str):
     if not query:
@@ -51,7 +51,7 @@ def search(query: str):
         return []
 
 
-# ================= RECOMMEND =================
+#  RECOMMEND 
 @app.get("/recommend")
 def recommend(query: str):
     if not query:
@@ -75,16 +75,16 @@ def recommend(query: str):
     except:
         return sorted(valid_movies, key=lambda x: x.get("vote_average", 0), reverse=True)[:10]
 
-# ================= TRENDING =================
+#  TRENDING 
 @app.get("/trending")
 def trending():
     return get_popular()
 
 
-# ================= MOVIE DETAILS =================
+#  MOVIE DETAILS
 @app.get("/movie/{movie_id}")
 def get_movie(movie_id: int):
-    url = f"{BASE_URL}/movie/{movie_id}?api_key={API_KEY}&append_to_response=credits"
+    url = f"{BASE_URL}/movie/{movie_id}?api_key={API_KEY}&append_to_response=credits,videos"
     try:
         return requests.get(url, timeout=5).json()
     except:

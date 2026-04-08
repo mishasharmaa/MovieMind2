@@ -14,7 +14,7 @@ function Home() {
     loadTrending();
   }, []);
 
-  // ================= LOAD TRENDING =================
+  // LOAD TRENDING 
   const loadTrending = async () => {
     try {
       const res = await getTrending();
@@ -24,7 +24,7 @@ function Home() {
     }
   };
 
-  // ================= SEARCH =================
+  //  SEARCH 
   const handleSearch = async () => {
     if (!query.trim()) return;
 
@@ -37,7 +37,7 @@ function Home() {
     }
   };
 
-  // ================= RECOMMEND =================
+  //  RECOMMEND
   const handleRecommend = async () => {
     if (!query.trim()) return;
 
@@ -50,17 +50,17 @@ function Home() {
     }
   };
 
-  // ================= GENRE MAP =================
+  //  GENRE MAP
   const genreMap = {
-    28: "🔥 Action",
-    35: "😂 Comedy",
-    27: "😱 Horror",
-    10749: "❤️ Romance",
-    878: "🚀 Sci-Fi",
-    18: "🎭 Drama"
+    28: "Action",
+    35: "Comedy",
+    27: "Horror",
+    10749: "Romance",
+    878: "Sci-Fi",
+    18: "Drama"
   };
 
-  // ================= GROUP MOVIES =================
+  //  GROUP MOVIES
   const grouped = {};
   trending.forEach((movie) => {
     movie.genre_ids?.forEach((id) => {
@@ -73,7 +73,7 @@ function Home() {
     });
   });
 
-  // ================= MOVIE ROW =================
+  //  MOVIE ROW 
   const MovieRow = ({ title, data }) => (
     <div style={{ marginBottom: "30px" }}>
       <h2>{title}</h2>
@@ -98,8 +98,10 @@ function Home() {
                 src={`https://image.tmdb.org/t/p/w200${m.poster_path}`}
                 alt=""
                 style={{
+                  width: "150px",
+                  height: "225px",  
+                  objectFit: "cover", 
                   borderRadius: "10px",
-                  width: "100%",
                   transition: "0.3s"
                 }}
                 onMouseOver={(e) =>
@@ -127,7 +129,7 @@ function Home() {
         minHeight: "100vh"
       }}
     >
-      {/* 🔥 CLEAN HEADER */}
+      {/* CLEAN HEADER */}
       <div
         style={{
           position: "relative",
@@ -219,17 +221,17 @@ function Home() {
         </button>
       </div>
 
-      {/* 🔍 SEARCH RESULTS */}
+      {/* SEARCH RESULTS */}
       {searchResults.length > 0 && (
         <MovieRow title="Search Results" data={searchResults} />
       )}
 
-      {/* 🎯 RECOMMENDED */}
+      {/* RECOMMENDED */}
       {recommended.length > 0 && (
         <MovieRow title="Recommended for You" data={recommended} />
       )}
 
-      {/* 🎬 GENRE ROWS */}
+      {/* GENRE ROWS */}
       {Object.keys(grouped).map((genreId) => (
         <MovieRow
           key={genreId}

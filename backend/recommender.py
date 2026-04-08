@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # vectorizer
 vectorizer = TfidfVectorizer(stop_words="english", max_features=3000)
 
-# ================= BUILD TEXT =================
+# BUILD TEXT 
 def build_text(movie):
     overview = movie.get("overview", "")
     
@@ -16,7 +16,7 @@ def build_text(movie):
     return f"{title} {overview} {genres}"
 
 
-# ================= COMPUTE SIMILARITY =================
+# COMPUTE SIMILARITY 
 def compute_similarity(movies):
     texts = [build_text(m) for m in movies]
 

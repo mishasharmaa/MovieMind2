@@ -1,31 +1,44 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function MovieDetails() {
   const { id } = useParams();
 
   const [movie, setMovie] = useState(null);
   const [providers, setProviders] = useState([]);
+  const [trailer, setTrailer] = useState(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     fetchMovie();
     fetchProviders();
   }, [id]);
 
-  // ================= FETCH MOVIE =================
+  // FETCH MOVIE
   const fetchMovie = async () => {
     try {
       const res = await axios.get(`http://127.0.0.1:8000/movie/${id}`);
       setMovie(res.data);
+
+      //  FIND TRAILER
+      const videos = res.data.videos?.results || [];
+      const trailerVideo = videos.find(
+        (v) => v.type === "Trailer" && v.site === "YouTube"
+      );
+
+      if (trailerVideo) {
+        setTrailer(trailerVideo.key);
+      }
+
     } catch (err) {
       console.error("Error fetching movie:", err);
     }
   };
 
-  // ================= FETCH WATCH PROVIDERS =================
+  // FETCH WATCH PROVIDER
   const fetchProviders = async () => {
     try {
       const res = await axios.get(`http://127.0.0.1:8000/watch/${id}`);
@@ -35,18 +48,18 @@ function MovieDetails() {
     }
   };
 
-  // ================= WATCHLIST =================
+  // WATCHLIST 
   const addToWatchlist = () => {
-  if (!movie) return;
+    if (!movie) return;
 
-  const saved = JSON.parse(localStorage.getItem("watchlist")) || [];
+    const saved = JSON.parse(localStorage.getItem("watchlist")) || [];
 
-  if (!saved.find((m) => m.id === movie.id)) {
-    saved.push(movie);
-    localStorage.setItem("watchlist", JSON.stringify(saved));
-    alert("⭐ Added to watchlist!");
-  }
-};
+    if (!saved.find((m) => m.id === movie.id)) {
+      saved.push(movie);
+      localStorage.setItem("watchlist", JSON.stringify(saved));
+      alert("Added to watchlist!");
+    }
+  };
 
   if (!movie) return <p style={{ color: "white" }}>Loading...</p>;
 
@@ -63,7 +76,7 @@ function MovieDetails() {
     >
       <h1>{movie.title}</h1>
 
-      {/* ================= MAIN LAYOUT ================= */}
+      {/* MAIN LAYOUT  */}
       <div style={{ display: "flex", gap: "30px", marginTop: "20px" }}>
         
         {/* POSTER */}
@@ -94,7 +107,7 @@ function MovieDetails() {
               cursor: "pointer"
             }}
           >
-            ⭐ Add to Watchlist
+            Add to Watchlist
           </button>
 
           <button
@@ -106,11 +119,30 @@ function MovieDetails() {
               cursor: "pointer"
             }}
           >
-            📂 View Watchlist
+            View Watchlist
           </button>
 
-          {/* ================= WATCH PROVIDERS ================= */}
-          <h3 style={{ marginTop: "20px" }}>📺 Where to Watch</h3>
+          {/*  PLAY TRAILER BUTTON */}
+          {trailer && (
+            <button
+              onClick={() => setShowTrailer(true)}
+              style={{
+                marginLeft: "10px",
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                background: "#ef4444",
+                color: "white",
+                border: "none"
+              }}
+            >
+              ▶ Play Trailer
+            </button>
+          )}
+
+          {/* WATCH PROVIDERS */}
+          <h3 style={{ marginTop: "20px" }}>Where to Watch</h3>
           <div style={{ display: "flex", gap: "10px" }}>
             {providers.length > 0 ? (
               providers.map((p) => (
@@ -128,13 +160,49 @@ function MovieDetails() {
         </div>
       </div>
 
-      {/* ================= CAST ================= */}
-      <h3 style={{ marginTop: "30px" }}>🎭 Cast</h3>
+      {/* CAST */}
+      <h3 style={{ marginTop: "30px" }}>Cast</h3>
       <ul>
         {cast.map((actor) => (
           <li key={actor.id}>{actor.name}</li>
         ))}
       </ul>
+
+      {/*  TRAILER MODAL */}
+      {showTrailer && (
+        <div
+          onClick={() => setShowTrailer(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.85)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "80%",
+              maxWidth: "900px"
+            }}
+          >
+            <iframe
+              width="100%"
+              height="500"
+              src={`https://www.youtube.com/embed/${trailer}`}
+              title="Trailer"
+              frameBorder="0"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

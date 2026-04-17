@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { searchMovies, getTrending, getRecommendations } from "../Api";
+import { searchMovies, getTrending, getRecommendations } from "../Api.js";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
